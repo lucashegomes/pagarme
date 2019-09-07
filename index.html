@@ -1,0 +1,92 @@
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <title>Página de Conversão</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="panel panel-default bootstrap-basic">
+        <!-- <form class="panel-body" action="your-form-handling-page" method="POST" id="checkout-form" onsubmit="return do_when_clicking_submit_button()"> -->
+        <form class="panel-body" action="./index.php" method="POST" id="checkout-form" >
+            <div class="row">
+                <!-- Nome Completo -->
+                <div class="form-group col-md-12">
+                    <label for="full-name">Nome Completo</label>
+                    <input type="text" class="form-control" id="full-name">
+                </div>
+                
+                <!-- E-mail -->
+                <div class="form-group col-md-12">
+                    <label for="email">E-mail</label>
+                    <input type="text" class="form-control" id="email">
+                </div>
+                
+                <!-- Celular -->
+                <div class="form-group col-md-12">
+                    <label for="cellphone-number">Celular</label>
+                    <input type="text" class="form-control" id="email">
+                </div>
+                
+                
+                <!-- CPF ou CNPJ -->
+                <div class="form-group col-md-12">
+                    <label for="cpf-cnpj">CPF ou CNPJ</label>
+                    <input type="text" class="form-control" id="email">
+                </div>
+                
+                <span class="">SELECIONE UM MÉTODO DE PAGAMENTO</span>
+            </div>
+            
+            <div class="row">
+                <hr>
+                <!--Hosted Field for CC number-->
+                <div class="form-group col-md-12">
+                    <label for="card-number">Número do Cartão</label>
+                    <div class="input-group">
+                                <div id="card-logo" class="input-group-addon"><img src="https://files.readme.io/d1a25b4-generic-card.png" height="20px"></div>
+                    <div class="form-control" id="card-number" data-bluesnap="ccn">
+                        
+                    </div>
+                </div>
+                <span class="helper-text" id="card-help"></span>
+                </div>
+                
+                    <!-- Validade do cart�o-->
+                <div class="form-group col-xs-7">
+                    <label for="exp-date">Validade (MM/AA)</label>
+                    <div class="form-control" id="exp-date" data-bluesnap="exp"></div>
+                    <span class="helper-text"></span>
+                </div>
+                
+                    <!-- C�digo de seguran�a-->
+                    <div class="form-group col-xs-5">
+                <label for="cvv">Cod Segurança</label>
+                <div class="form-control" id="cvv" data-bluesnap="cvv"></div>
+                <span class="helper-text"></span>
+                </div>
+                
+                <!-- Número do cartão -->
+                <div class="form-group col-md-12">
+                    <label for="cardholder-name">Nome impresso no cartão</label>
+                    <input type="text" class="form-control" id="cardholder-name">
+                    <span class="helper-text"></span>
+                </div>
+            
+            </div>	
+
+            <button class="btn btn-success btn-lg col-xs-6 col-xs-offset-3" type="submit" id="submit-button">Pagar e Receber Agora</button> 
+        </form>
+    </div>
+  
+<!--BlueSnap Hosted Payment Fields JavaScript file-->
+<script type="text/javascript" src="https://sandbox.bluesnap.com/services/hosted-payment-fields/v1.0/bluesnap.hpf.mini.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script type="text/javascript" src="./script.js"></script>
+
+</body>
+</html>
