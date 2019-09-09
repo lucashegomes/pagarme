@@ -1,21 +1,29 @@
-/* Bootstrap styles*/
-
 .panel {
-    width: 70%;
     margin: 2em auto;
+    width: 50%;
   }
   
-  
   .panel-body {
+    font-family: 'Lato', sans-serif;
     width: 90%;
     margin: 2em auto;
   }
   
-  label {
-    font-family: Lato, Helvetica, Arial, sans-serif;
+  label, #checkout-form input{
     color: #636871 !important;
+    font-size: 1.7rem;
+    font-weight: 400;
+    letter-spacing: 0.5px;
     line-height: 1;
-    font-size: 1 rem;
+  }
+
+  #checkout-form input {
+    border: 1px solid #d9d9d9;
+    height: 48px;
+    margin: 5px 0px;
+    padding: 10px 8px;
+    font-weight: normal;
+    font-size: 2rem;
   }
   
   .helper-text {
@@ -41,4 +49,35 @@
   .hosted-field-valid {
     border: 1px solid #14ba57 ;
   }
-  
+
+  .lock {
+    fill: #21883b;
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+  }
+
+  .credit-card-container{
+    display: table;
+    /* width:100%; */
+    height: 10%;
+  }
+  .credit-card {
+    display: table-cell;
+    padding-right: 0px !important;
+    margin: 0px 0 0px 0; /* Just for presentation (Not required) */
+    float: left; /* Just for presentation (Not required) */
+    position: relative; /* Just for presentation (Not required) */
+    -transition-duration:0.5s;
+    -webkit-transition-duration:0.5s;
+    -moz-transition-duration:0.5s;
+  }
+
+  .credit-card-container:hover .credit-card {
+    width:20%;
+  }
+
+  .credit-card-container:hover .credit-card:hover {
+    width:20%;
+  }
+

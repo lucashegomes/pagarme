@@ -7,6 +7,7 @@
     <title>Página de Conversão</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900&display=swap" rel="stylesheet">    
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -23,27 +24,49 @@
                 <!-- E-mail -->
                 <div class="form-group col-md-12">
                     <label for="email">E-mail</label>
-                    <input type="text" class="form-control" id="email">
+                    <input type="email" class="form-control" id="email">
                 </div>
                 
                 <!-- Celular -->
                 <div class="form-group col-md-12">
                     <label for="cellphone-number">Celular</label>
-                    <input type="text" class="form-control" id="email">
+                    <input type="tel" class="form-control" id="cellphone-number">
                 </div>
                 
                 
                 <!-- CPF ou CNPJ -->
                 <div class="form-group col-md-12">
                     <label for="cpf-cnpj">CPF ou CNPJ</label>
-                    <input type="text" class="form-control" id="email">
+                    <input type="text" class="form-control" id="cpf-cnpj">
+                </div>
+
+                <div id="security-message-label" class="security message">
+                    
+                    <p>
+                    <svg class="lock" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M75 143c-.3 0-.5 0-.8-.1-8.4-2.5-16.4-6.7-23.8-12.5C32 116 21.1 92.8 21.1 68.4V24c0-1 .5-1.9 1.4-2.3 36.3-19.5 68.6-19.5 104.9 0 .9.5 1.4 1.4 1.4 2.3v44.4c0 24.4-11 47.5-29.3 62-7.4 5.8-15.4 10-23.8 12.5-.2 0-.4.1-.7.1zM26.5 25.6v42.8c0 22.8 10.2 44.4 27.3 57.8 6.6 5.2 13.8 9 21.3 11.4 7.5-2.3 14.6-6.1 21.3-11.4 17.1-13.4 27.3-35 27.3-57.8V25.6c-34.1-17.9-63.3-17.9-97.2 0z"></path><path class="st0" d="M97.9 100.2H52.1c-1.5 0-2.6-1.2-2.6-2.6V60.9c0-1.5 1.2-2.6 2.6-2.6h45.7c1.5 0 2.6 1.2 2.6 2.6v36.6c.1 1.5-1.1 2.7-2.5 2.7zm-43.1-5.3h40.4V63.6H54.8v31.3z"></path><path class="st0" d="M88.7 63.6H61.3c-1.5 0-2.6-1.2-2.6-2.6V50.2c0-9 7.3-16.4 16.4-16.4s16.4 7.3 16.4 16.4v10.7c-.1 1.5-1.3 2.7-2.8 2.7zm-24.8-5.3H86v-8c0-6.1-5-11.1-11.1-11.1s-11.1 5-11.1 11.1v8z"></path>
+                    </svg>
+                    
+                    Seus dados serão mantidos em sigilo</p>
+                    <p class="m-0">SELECIONE UM MÉTODO DE PAGAMENTO</p>
                 </div>
                 
-                <span class="">SELECIONE UM MÉTODO DE PAGAMENTO</span>
             </div>
             
             <div class="row">
                 <hr>
+
+                <!-- Bandeiras de cartão-->
+                <div class="form-group col-md-12 payment-flags">
+                    <div class="col-md-2 credit-card-container"><img class="credit-card visa" src="./credit-card-flags/visa.svg"/></div>
+                    <div class="col-md-2 credit-card-container"><img class="credit-card amex" src="./credit-card-flags/amex.svg"/></div>
+                    <div class="col-md-2 credit-card-container"><img class="credit-card elo" src="./credit-card-flags/elo.svg"/></div>
+                    <div class="col-md-2 credit-card-container"><img class="credit-card diners" src="./credit-card-flags/diners.svg"/></div>
+                    <div class="col-md-2 credit-card-container"><img class="credit-card hiper" src="./credit-card-flags/hipercard.svg"/></div>
+                    <div class="col-md-2 credit-card-container"><img class="credit-card paypal" src="./credit-card-flags/paypal.svg"/></div>
+                    <!-- <div class="col-md-2 credit-card-container"><img class="credit-card boleto" src="./credit-card-flags/boleto.svg"/></div> -->
+                </div>
+
                 <!--Hosted Field for CC number-->
                 <div class="form-group col-md-12">
                     <label for="card-number">Número do Cartão</label>
@@ -86,6 +109,7 @@
 <!--BlueSnap Hosted Payment Fields JavaScript file-->
 <script type="text/javascript" src="https://sandbox.bluesnap.com/services/hosted-payment-fields/v1.0/bluesnap.hpf.mini.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
 <script type="text/javascript" src="./script.js"></script>
 
 </body>

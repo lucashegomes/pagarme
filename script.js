@@ -115,12 +115,28 @@ expPlaceHolder: "MM/YYYY"
 
 
     
-    function do_when_clicking_submit_button(){						   
-        bluesnap.submitCredentials( function(cardData){
-            console.log('the card type is ' + cardData.ccType + ' and last 4 digits are ' + cardData.last4Digits + ' and exp is ' + cardData.exp + ' after that I can call final submit');
-        });
-        /* submit the form
-        return true; */
-        return false; // don't submit the form
-    }					
+function do_when_clicking_submit_button(){						   
+    bluesnap.submitCredentials( function(cardData){
+        console.log('the card type is ' + cardData.ccType + ' and last 4 digits are ' + cardData.last4Digits + ' and exp is ' + cardData.exp + ' after that I can call final submit');
+    });
+    /* submit the form
+    return true; */
+    return false; // don't submit the form
+}					
 
+//Cpf and CNPJ mask and listener config
+var options = {
+    onKeyPress: function (cpf, ev, el, op) {
+        var masks = ['000.000.000-000', '00.000.000/0000-00'];
+        $('#cpf-cnpj').mask((cpf.length > 14) ? masks[1] : masks[0], op);
+    }
+}
+    
+if ($('#cpf-cnpj').length > 11) {
+    $('#cpf-cnpj').mask('00.000.000/0000-00', options);
+} else {
+    $('#cpf-cnpj').mask('000.000.000-00#', options);
+}
+
+//Cellphone mask
+$("#cellphone-number").mask("(00) 00000-0000");
