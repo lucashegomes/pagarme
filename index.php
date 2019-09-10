@@ -1,176 +1,144 @@
 <?php
-    
-tokenizar(
-'4277539369335836',
-'1120',
-'523',
-'Teste Ahoooho'
-);
 
-$_apiKey = 'ak_test_fvXB0SgOCv5fZ5fWFEDx0eV5nK7ok1';
+use Aws\CloudFront\Exception\Exception;
 
-$_correspondenciaErros = [
-    '0000' => 200,
-    '1000' => 503,
-    '1001' => 501, 
-    '1002' => 502,
-    '1003' => 502,
-    '1004' => 502,
-    '1005' => 502,
-    '1006' => 502,
-    '1007' => 502,
-    '1008' => 502,
-    '1009' => 502,
-    '1010' => 502,
-    '1011' => 502,
-    '1012' => 502,
-    '1013' => 502,
-    '1014' => 502,
-    '1015' => 502,
-    '1016' => 503,
-    '1017' => 503,
-    '1018' => 502,
-    '1019' => 502,
-    '1020' => 502,
-    '1021' => 502,
-    '1022' => 502,
-    '1023' => 502,
-    '1024' => 502,
-    '1025' => 502,
-    '1042' => 502,
-    '1045' => 503,
-    '2000' => 502,
-    '2001' => 502,
-    '2002' => 502,
-    '2003' => 502,
-    '2004' => 502, 
-    '2005' => 502,
-    '2006' => 502,
-    '2007' => 502,
-    '2008' => 502,
-    '2009' => 502,
-    '9102' => 502,
-    '9108' => 503,
-    '9109' => 503,
-    '9111' => 503,
-    '9112' => 503, 
-    '9999' => 503,
-];
+require("vendor/autoload.php");
 
-/**
- * @param float $valor Valor a ser cobrado pelo pedido (já deve incluir valores de frete, embrulho e custos extras). Esse valor é o que será debitado do consumidor.
- * @param string $token Token que deve ser utilizado em substituição aos dados do cartão para uma autorização direta ou uma transação recorrente. Não é permitido o envio do token junto com os dados do cartão na mesma transação.     
- * 
- * @return array;
- * 
- */
-function pagar($valor, $token = '', $numeroCartao = '', $numeroParcelas = 0)
-{  
-    $valor= number_format($valor, 2, '', ''); //trata o valor
+$pagarme = new Gateway_Pagarme();
+$pagarme->pay();
 
-    // $cartaoTruncado = Superlogica_String::truncarCartao($numeroCartao);     
+class Gateway_Pagarme {
 
-    $transaction  = '{
-        "api_key" : "ak_test_fvXB0SgOCv5fZ5fWFEDx0eV5nK7ok1",
-        "amount" : "'.$valor.'",
-        "card_id" : "'.$token.'",
-        "installments" : "'.($numeroParcelas == 0 ? 1 : $numeroParcelas).'"}';
+    private $_apiKey = 'ak_test_fvXB0SgOCv5fZ5fWFEDx0eV5nK7ok1';
+    private $_paymentWay = '';
+    private $_pagarme = null;
+    private $_data = [];
 
-    $resposta= _send($transaction); 
-    print_r($resposta);die(" oi");
-    $result['envio_pagamento']= $transaction;
-    $result['resposta_pagamento']= $resposta;
-    $result['url'] = 'https://api.pagar.me/1/';
-    
-    $resposta = json_decode($resposta);
-    
-    $result['tid']= $resposta->tid;
-    $result['capturada'] = $resposta->status == 'paid';
-    $result['codigo-token'] = '';
-    $result['tid_conciliacao']= $resposta->tid;
-    $result['bandeira'] = $resposta->card->brand;
-    
-    if ($result['capturada']){
-        $result['autorizacao']= $resposta->authorization_code;
-    } else {
-        $resposta->acquirer_response_code = $resposta->acquirer_response_code == '00' ? 9999 : $resposta->acquirer_response_code;
+    public function __construct($paymentWay = 'credit_card')
+    {
+        $this->_paymentWay = $paymentWay;
+        $this->_pagarme = new PagarMe\Client($this->_apiKey);
+        $this->_data = $_POST;
     }
+
+    /**
+     * @param float $valor Valor a ser cobrado pelo pedido (jÃ¡ deve incluir valores de frete, embrulho e custos extras). Esse valor Ã© o que serÃ¡ debitado do consumidor.
+     * @param string $token Token que deve ser utilizado em substituiÃ§Ã£o aos dados do cartÃ£o para uma autorizaÃ§Ã£o direta ou uma transaÃ§Ã£o recorrente. NÃ£o Ã© permitido o envio do token junto com os dados do cartÃ£o na mesma transaÃ§Ã£o.     
+     * 
+     * @return array;
+     * 
+     */
+    public function pay()
+    {
+        try {
+
+            if ($this->_paymentWay == 'credit_card') {
     
-    $result['msg']= $resposta->acquirer_response_code == '00' ? 'Sucesso.' : 'Autorização negada, motivo: ' . ($resposta->acquirer_response_code ? $resposta->acquirer_response_code : 'Cartão inválido, verifique os dados cadastrados.'); 
-    $result['statuscartao'] = $result['capturada'] ? 200 : $resposta->acquirer_response_code;
-    // $result['statuscartao'] = $result['capturada'] ? 200 : $this->getStatusCartao($resposta->acquirer_response_code);
-
-    return $result;
-
-}  
-
-function cancelar($tid,$dtTransacao='', $valor='', $iniId='', $bandeira='', $tipoTransacao = '')
-{
+                $transaction = $this->_pagarme->transactions()->create([
+                    'amount' => $this->_data['amount'],
+                    'payment_method' => $this->_paymentWay,
+                    'card_holder_name' => $this->_data['cardholder-name'],
+                    'card_cvv' => $this->_data['cvv'],
+                    'card_number' => $this->_data['card-number'],
+                    'card_expiration_date' => $this->_data['exp-date'],
+                    'customer' => [
+                        'external_id' => $this->_data['client_id'], //VALIDAR NOME CORRETO DO ID NA BASE DO CLIENTE
+                        'name' => $this->_data['full-name'],
+                        'type' => count($this->_data['cpf-cnpj']) <= 11 ? 'individual' : 'corporation', //VALIDAR ISSO
+                        'country' => 'br',
+                        'documents' => [
+                          [
+                            'type' => 'cpf',
+                            'number' => $this->_data['cpf-cnpj'],
+                          ]
+                        ],
+                        'phone_numbers' => [ $this->_data['cellphone-number'] ],
+                        'email' => $this->_data['email'],
+                    ],
+                    'billing' => [
+                        'name' => $this->_data['cardholder-name'],
+                        'address' => [
+                          'country' => 'br',
+                          'street' => 'Avenida Brigadeiro Faria Lima',
+                          'street_number' => '1811',
+                          'state' => 'sp',
+                          'city' => 'Sao Paulo',
+                          'neighborhood' => 'Jardim Paulistano',
+                          'zipcode' => '01451001'
+                        ]
+                    ],
+                    'shipping' => [
+                        'name' => 'Nome de quem receberÃ¡ o produto',
+                        'fee' => 1020,
+                        'delivery_date' => '2019-09-10',
+                        'expedited' => false,
+                        'address' => [
+                          'country' => 'br',
+                          'street' => 'Avenida Brigadeiro Faria Lima',
+                          'street_number' => '1811',
+                          'state' => 'sp',
+                          'city' => 'Sao Paulo',
+                          'neighborhood' => 'Jardim Paulistano',
+                          'zipcode' => '01451001'
+                        ]
+                    ],
+                    'items' => [
+                        [
+                          'id' => '1',
+                          'title' => 'R2D2',
+                          'unit_price' => 300,
+                          'quantity' => 1,
+                          'tangible' => true
+                        ],
+                        [
+                          'id' => '2',
+                          'title' => 'C-3PO',
+                          'unit_price' => 700,
+                          'quantity' => 1,
+                          'tangible' => true
+                        ]
+                    ]
+                ]);
             
-    $cancelar= '{
-                "api_key": "' . $this->_password . '"
-                }';
+            } else if ($this->_paymentWay == 'boleto') {
     
-    $resposta= $this->_send($cancelar, 'transactions/'. $tid . '/refund');    
-    
-    $result['envio_cancelamento']= $cancelar;
-    $result['resposta_cancelamento']= $resposta;
-    $result['url'] = $this->_urls[$this->_ambiente];
-    
-    $resposta = json_decode($resposta);
+            }
+        
+        } catch (Exception $e) {
+            throw new Exception('Erro ao realizar pagamento: ', $e);
+        }
+    }
 
-    $result['cancelada'] = $resposta->acquirer_response_code == '00';
-    $result['msg'] = $resposta->acquirer_response_code == '00' ? 'Sucesso.' : $resposta->acquirer_response_code;
-    
-    return $result;        
-}
+    public function getTransaction($idTransaction = '')
+    {
+        if (empty($idTransaction)) {
+            throw new Exception('Identificador da transaÃ§Ã£o nÃ£o informado');
+        }
 
-function tokenizar($numeroCartao='',$vencimentoCartao='',$cvv='', $nomeCartao='')
-{
-    $nomeCartao = substr($nomeCartao, 0, 26);
-    $card = '{
-            "api_key":"ak_test_fvXB0SgOCv5fZ5fWFEDx0eV5nK7ok1",
-            "card_number":"'.$numeroCartao.'",
-            "card_holder_name":"'.$nomeCartao.'", 
-            "card_expiration_date": "'.$vencimentoCartao.'",
-            "card_cvv":"'.$cvv.'"
-        }';
+        try {
 
-    $cadastrarCartao = _send($card,'cards');
-    $dadosCartaoPagarMe = json_decode($cadastrarCartao);
+            $transaction = $this->_pagarme->transactions()->get([
+                'id' => $idTransaction
+            ]);
 
-    pagar(
-        '10',
-        $dadosCartaoPagarMe->id,
-        '4277539369335836',
-        2
-    );
-}
+        } catch(Exception $e) {
+            throw new Exception("Erro ao consultar a transaÃ§Ã£o {$idTransaction}: ", $e);
+        }
 
-/**
- * Envia uma requisição para a cielo através do xml passado
- * 
- * @param string $xml conteudo xml
- * @return array 
- */
-function _send($json, $funcao='transactions')
-{        
-    $curl = curl_init();
+        return $transaction;
+    }
 
-    if (is_resource($curl)){
-        $headers = array(
-            'Accept: application/json',
-            'Content-Type: application/json'
-        );
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt_array($curl, array(
-                CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_URL => 'https://api.pagar.me/1/'. $funcao,
-                CURLOPT_POST => 1,
-                CURLOPT_POSTFIELDS => $json));
+    public function sendNotification($idTransaction = '', $email = '')
+    {
+        if (empty($email)) {
+            return false;
+        }
 
-        $result = curl_exec($curl);
+        $transactionPaymentNotify = $this->_pagarme->transactions()->collectPayment([
+            'id' => $idTransaction,
+            'email' => $email,
+        ]);
 
-        return $result;      
+        return $transactionPaymentNotify;
     }
 }
