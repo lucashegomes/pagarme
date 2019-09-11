@@ -1,83 +1,165 @@
 .panel {
-    margin: 2em auto;
-    width: 50%;
-  }
-  
-  .panel-body {
-    font-family: 'Lato', sans-serif;
-    width: 90%;
-    margin: 2em auto;
-  }
-  
-  label, #checkout-form input{
-    color: #636871 !important;
-    font-size: 1.7rem;
-    font-weight: 400;
-    letter-spacing: 0.5px;
-    line-height: 1;
-  }
+  margin: 2em auto;
+  width: 50%;
+}
 
-  #checkout-form input {
-    border: 1px solid #d9d9d9;
-    height: 48px;
-    margin: 5px 0px;
-    padding: 10px 8px;
-    font-weight: normal;
-    font-size: 2rem;
-  }
-  
-  .helper-text {
-    color: #e93143;
-    font-size: 12px;
-    margin-top: 5px;
-    height: 12px;
-    display: block;
-  }
-  
-  
-  /* Hosted Payment Fields styles*/
-  .hosted-field-focus { 
-    border: 1px solid #66afe9;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
-  }
-  
-  .hosted-field-invalid {
-    border: 1px solid #e93143;
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(233,49,67, 0.8);
-  }
-  
-  .hosted-field-valid {
-    border: 1px solid #14ba57 ;
-  }
+.panel-body {
+  font-family: 'Lato', sans-serif;
+  width: 90%;
+  margin: 2em auto;
+}
 
-  .lock {
-    fill: #21883b;
-    width: 25px;
-    height: 25px;
-    margin-right: 5px;
-  }
+label, #checkout-form input{
+  color: #636871 !important;
+  font-size: 1.7rem;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  line-height: 1;
+}
 
-  .credit-card-container{
-    display: table;
-    /* width:100%; */
-    height: 10%;
-  }
-  .credit-card {
-    display: table-cell;
-    padding-right: 0px !important;
-    margin: 0px 0 0px 0; /* Just for presentation (Not required) */
-    float: left; /* Just for presentation (Not required) */
-    position: relative; /* Just for presentation (Not required) */
-    -transition-duration:0.5s;
-    -webkit-transition-duration:0.5s;
-    -moz-transition-duration:0.5s;
-  }
+#checkout-form input {
+  border: 1px solid #d9d9d9;
+  height: 48px;
+  margin: 5px 0px;
+  padding: 10px 8px;
+  font-weight: normal;
+  font-size: 2rem;
+}
 
-  .credit-card-container:hover .credit-card {
-    width:20%;
-  }
+.helper-text {
+  color: #e93143;
+  font-size: 12px;
+  margin-top: 5px;
+  height: 12px;
+  display: block;
+}
 
-  .credit-card-container:hover .credit-card:hover {
-    width:20%;
-  }
+hr {
+  margin-top: 10px;
+}
 
+/* Hosted Payment Fields styles*/
+.hosted-field-focus { 
+  border: 1px solid #66afe9;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+}
+
+.hosted-field-invalid {
+  border: 1px solid #e93143;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(233,49,67, 0.8);
+}
+
+.hosted-field-valid {
+  border: 1px solid #14ba57 ;
+}
+
+.lock {
+  fill: #21883b;
+  width: 25px;
+  height: 25px;
+  margin-right: 5px;
+}
+
+button .lock {
+  fill: #FFFFFF !important;
+}
+
+.credit-card{
+  display: table;
+  /* width:100%; */
+  height: 10%;
+  float: left;
+}
+.credit-card img {
+  display: table-cell;
+  height: 40px;
+  padding-right: 0px !important;
+  margin: 0px 0 0px 0; /* Just for presentation (Not required) */
+  float: left; /* Just for presentation (Not required) */
+  position: relative; /* Just for presentation (Not required) */
+  -transition-duration:0.9s;
+  -webkit-transition-duration:0.9s;
+  -moz-transition-duration:0.9s;
+  width: 70px;
+}
+
+.credit-card:hover img {
+  transition: all 1350ms ease-in-out;
+  height: auto;
+  cursor: pointer;
+}
+
+.cvv i {
+  float: right;
+}
+
+.popup-info {
+  display: none;
+  position: absolute;
+  z-index: 10;
+  background: #fff;
+  border-radius: 5px;
+  border: 1px solid #d3d3d3;
+  box-shadow: 2px 2px 6px 0px rgba(50, 50, 50, 0.26);
+  width: 250px;
+  padding: 15px;
+  font-family: "Montserrat Light";
+  font-size: 12px;
+  color: #6f7982;
+  right: 30vw;
+  top: 110vh;
+}
+.popup-info p {
+  margin: 0;
+}
+.popup-info p:not(:last-of-type){
+  margin-bottom: 12px;
+}
+
+.card-info img {
+  width: 100px;
+  margin-left: 5px;
+}
+.card-info p {
+  margin-bottom: 12px;
+}
+
+.card-info:before {
+  content: "";
+  display: block;
+  position: absolute;
+  right: -8px;
+  top: 6px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 9px 0 9px 10px;
+  border-color: transparent transparent transparent #ffffff;
+}
+
+button {
+  background-color: #3960A3 !important;
+  color: #FFFFFF !important;
+  height: 60px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-transform: unset;
+  border-radius: 4px;
+  padding: 8px 24px;
+}
+
+button:hover {
+  background-color: #203f75 !important;
+}
+
+.security-message, .payment-method, button span {
+  clear: both;
+  display: flex;
+  font-size: 1.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.payment-method {
+  margin-top: 20px;
+}

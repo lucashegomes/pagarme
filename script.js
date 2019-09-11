@@ -140,3 +140,13 @@ if ($('#cpf-cnpj').length > 11) {
 
 //Cellphone mask
 $("#cellphone-number").mask("(00) 00000-0000");
+
+//Pop-in info cvv
+$("#help-cvv").hover(
+    function(){
+      $(".popup-info.card-info").show();
+    },
+    function(){
+      $(".popup-info.card-info").hide();
+    }
+);
