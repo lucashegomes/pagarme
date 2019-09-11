@@ -9,7 +9,7 @@
   margin: 2em auto;
 }
 
-label, #checkout-form input{
+label, #checkout-form input, .input {
   color: #636871 !important;
   font-size: 1.7rem;
   font-weight: 400;
@@ -17,7 +17,7 @@ label, #checkout-form input{
   line-height: 1;
 }
 
-#checkout-form input {
+#checkout-form input, .input {
   border: 1px solid #d9d9d9;
   height: 48px;
   margin: 5px 0px;
