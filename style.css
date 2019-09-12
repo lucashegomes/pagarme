@@ -9,7 +9,7 @@
   margin: 2em auto;
 }
 
-label, #checkout-form input, .input {
+label, #checkout-form input, div.input {
   color: #636871 !important;
   font-size: 1.7rem;
   font-weight: 400;
@@ -17,7 +17,7 @@ label, #checkout-form input, .input {
   line-height: 1;
 }
 
-#checkout-form input, .input {
+#checkout-form input, div.input {
   border: 1px solid #d9d9d9;
   height: 48px;
   margin: 5px 0px;
@@ -69,13 +69,13 @@ button .lock {
   justify-content: center;
 }
 
-.credit-card{
+.payment-flags div {
   display: table;
   /* width:100%; */
   height: 10%;
   float: left;
 }
-.credit-card img {
+.payment-flags img {
   display: table-cell;
   height: 40px;
   padding-right: 0px !important;
@@ -88,7 +88,7 @@ button .lock {
   width: 70px;
 }
 
-.credit-card:hover img {
+.payment-flags div:hover img {
   transition: all 1350ms ease-in-out;
   height: auto;
   cursor: pointer;
@@ -173,6 +173,35 @@ button:hover {
   display: none;
 }
 
-.show {
-  display: block;
+.security-badges div {
+  padding: 20px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  float: left;
+  margin-right: 10px;
+}
+
+.security-badges svg {
+  fill: rgb(49, 136, 52);
+  width: 35px;
+  height: 40px;
+  fill-rule: evenodd;
+}
+
+.security-badges .text {
+  color: #1AB25A;
+  display: flex;
+  flex-flow: column nowrap;
+  font-size: 1.3rem;
+  align-items: flex-start;
+  line-height: normal;
+  margin-left: 5px;
+  padding-top: 0px;
+  text-transform: uppercase;
+  justify-content: flex-start;
+}
+
+.security-badges .text .buy {
+  font-weight: bold;
 }

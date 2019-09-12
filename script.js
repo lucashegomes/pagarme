@@ -150,3 +150,28 @@ $("#help-cvv").hover(
       $(".popup-info.card-info").hide();
     }
 );
+
+$(".payment-flags .credit-card").click(function()
+{
+    $("div.paypal-panel").addClass('hide');
+    $("div.boleto-panel").addClass('hide');
+    $("div.card-panel").removeClass('hide');
+    event.stopPropagation();
+});
+
+$(".payment-flags .paypal").click(function(event)
+{
+    $("div.paypal-panel").removeClass('hide');
+    $("div.card-panel").addClass('hide');
+    $("div.boleto-panel").addClass('hide');
+    event.stopPropagation();
+});
+
+
+$(".payment-flags .boleto").click(function(event)
+{
+    $("div.boleto-panel").removeClass('hide');
+    $("div.card-panel").addClass('hide');
+    $("div.paypal-panel").addClass('hide');
+    event.stopPropagation();
+});

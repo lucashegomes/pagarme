@@ -2,15 +2,17 @@
 
 use Aws\CloudFront\Exception\Exception;
 
+use function GuzzleHttp\json_decode;
+
 require("vendor/autoload.php");
 
 $pagarme = new Gateway_Pagarme();
-$pagarme->pay();
+$pagarme->cancelTransaction('6949155');
 
 class Gateway_Pagarme {
 
     private $_apiKey = 'ak_test_fvXB0SgOCv5fZ5fWFEDx0eV5nK7ok1';
-    private $_paymentWay = '';
+    private $_paymentWay = null;
     private $_pagarme = null;
     private $_data = [];
 
@@ -21,14 +23,7 @@ class Gateway_Pagarme {
         $this->_data = $_POST;
     }
 
-    /**
-     * @param float $valor Valor a ser cobrado pelo pedido (já deve incluir valores de frete, embrulho e custos extras). Esse valor é o que será debitado do consumidor.
-     * @param string $token Token que deve ser utilizado em substituição aos dados do cartão para uma autorização direta ou uma transação recorrente. Não é permitido o envio do token junto com os dados do cartão na mesma transação.     
-     * 
-     * @return array;
-     * 
-     */
-    public function pay()
+    public function payTransaction()
     {
         try {
 
@@ -42,9 +37,9 @@ class Gateway_Pagarme {
                     'card_number' => $this->_data['card-number'],
                     'card_expiration_date' => $this->_data['exp-date'],
                     'customer' => [
-                        'external_id' => $this->_data['client_id'], //VALIDAR NOME CORRETO DO ID NA BASE DO CLIENTE
+                        'external_id' => $this->_data['client_id'],
                         'name' => $this->_data['full-name'],
-                        'type' => count($this->_data['cpf-cnpj']) <= 11 ? 'individual' : 'corporation', //VALIDAR ISSO
+                        'type' => ( strlen($this->_data['cpf-cnpj']) <= 11 ? 'individual' : 'corporation' ),
                         'country' => 'br',
                         'documents' => [
                           [
@@ -99,36 +94,63 @@ class Gateway_Pagarme {
                         ]
                     ]
                 ]);
+
+                $result = $this->_toArray($transaction);
             
             } else if ($this->_paymentWay == 'boleto') {
-    
+                $test = 0;
             }
-        
+
         } catch (Exception $e) {
             throw new Exception('Erro ao realizar pagamento: ', $e);
         }
+
+        return $result;
     }
 
-    public function getTransaction($idTransaction = '')
+    public function cancelTransaction($idTransaction = null)
     {
         if (empty($idTransaction)) {
-            throw new Exception('Identificador da transação não informado');
+            throw new Exception('Identificador da transa��o n�o informado');
+        }
+
+        try {
+
+            $refundedTransaction = $this->_pagarme->transactions()->refund([
+                'id' => $idTransaction,
+            ]);
+
+            $result = $this->_toArray($refundedTransaction);
+            
+        } catch (Exception $e) {
+            throw new Exception("Erro ao cancelar a transa��o {$idTransaction}: ", $e);
+        }
+
+        return $result;
+    }
+
+    public function getTransaction($idTransaction = null)
+    {
+        if (empty($idTransaction)) {
+            throw new Exception('Identificador da transa��o n�o informado');
         }
 
         try {
 
             $transaction = $this->_pagarme->transactions()->get([
-                'id' => $idTransaction
+                'id' => $idTransaction,
             ]);
 
+            $result = $this->_toArray($transaction);
+            
         } catch(Exception $e) {
-            throw new Exception("Erro ao consultar a transação {$idTransaction}: ", $e);
+            throw new Exception("Erro ao consultar a transa��o {$idTransaction}: ", $e);
         }
 
-        return $transaction;
+        return $result;
     }
 
-    public function sendNotification($idTransaction = '', $email = '')
+    public function sendNotification($idTransaction = null, $email = null)
     {
         if (empty($email)) {
             return false;
@@ -140,5 +162,10 @@ class Gateway_Pagarme {
         ]);
 
         return $transactionPaymentNotify;
+    }
+
+    private function _toArray($object = [])
+    {
+        return json_decode(json_encode($object), true);
     }
 }
