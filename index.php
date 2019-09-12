@@ -7,18 +7,18 @@ use function GuzzleHttp\json_decode;
 require("vendor/autoload.php");
 
 $pagarme = new Gateway_Pagarme();
-$pagarme->cancelTransaction('6949155');
+$pagarme->payTransaction();
 
 class Gateway_Pagarme {
 
     private $_apiKey = 'ak_test_fvXB0SgOCv5fZ5fWFEDx0eV5nK7ok1';
-    private $_paymentWay = null;
+    private $_paymentMethod = null;
     private $_pagarme = null;
     private $_data = [];
 
-    public function __construct($paymentWay = 'credit_card')
+    public function __construct($paymentMethod = 'credit_card')
     {
-        $this->_paymentWay = $paymentWay;
+        $this->_paymentMethod = $_POST['payment-method'] ?: $paymentMethod;
         $this->_pagarme = new PagarMe\Client($this->_apiKey);
         $this->_data = $_POST;
     }
@@ -27,11 +27,11 @@ class Gateway_Pagarme {
     {
         try {
 
-            if ($this->_paymentWay == 'credit_card') {
+            if ($this->_paymentMethod == 'credit_card') {
     
                 $transaction = $this->_pagarme->transactions()->create([
                     'amount' => $this->_data['amount'],
-                    'payment_method' => $this->_paymentWay,
+                    'payment_method' => $this->_paymentMethod,
                     'card_holder_name' => $this->_data['cardholder-name'],
                     'card_cvv' => $this->_data['cvv'],
                     'card_number' => $this->_data['card-number'],
@@ -97,7 +97,7 @@ class Gateway_Pagarme {
 
                 $result = $this->_toArray($transaction);
             
-            } else if ($this->_paymentWay == 'boleto') {
+            } else if ($this->_paymentMethod == 'boleto') {
                 $test = 0;
             }
 
