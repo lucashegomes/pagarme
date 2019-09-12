@@ -150,6 +150,31 @@ class Gateway_Pagarme {
         return $result;
     }
 
+    public function getCancellations($idTransaction)
+    {
+        $transactionRefunds = $this->_pagarme->refunds()->getList( !empty($idTransaction) ? [
+            'transaction_id' => $idTransaction
+        ] : []);
+
+        $result = $this->_toArray($transactionRefunds);
+
+        return $result;
+    }
+
+    public function calculateRate($amount, $freeInstallments, $maxInstallments, $rate)
+    {
+        $calculateInstallments = $this->_pagarme->transactions()->calculateInstallments([
+            'amount' => $amount,
+            'free_installments' => $freeInstallments,
+            'max_installments' => $maxInstallments,
+            'interest_rate' => $rate,
+        ]);
+
+        $result = $this->_toArray($calculateInstallments);
+
+        return $result;
+    }
+
     public function sendNotification($idTransaction = null, $email = null)
     {
         if (empty($email)) {
