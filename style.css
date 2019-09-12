@@ -205,6 +205,6 @@ button:hover {
 }
 
 .select-installments, .select-installments option {
-  height: 9%;
+  height: 5%;
   width: 40% !important;
 }
