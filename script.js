@@ -175,3 +175,26 @@ $(".payment-flags .boleto").click(function(event)
     $("div.paypal-panel").addClass('hide');
     event.stopPropagation();
 });
+
+function showInstallments()
+{
+    var total = 197.00;
+    var taxa = 4.40;
+
+    for (var i = 1; i <= 12; i++) {
+
+        var installmentValue = total;
+
+        if (i > 1) {
+            installmentValue = (total + (total * 0.01 * taxa)) / i;
+        }
+
+        $(".select-installments").prepend(
+            '<option value=' + i + '>' + i + 'x de R$' + installmentValue.toFixed(2) + '</option>'
+        );
+    }
+
+    $(".select-installments").removeClass('hide');
+        
+    $('.edit-installments').addClass('hide');
+}

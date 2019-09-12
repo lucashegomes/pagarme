@@ -56,6 +56,7 @@
          
                 <!-- Bandeiras de cartÃ£o-->
                 <div class="form-group col-md-12 payment-flags">
+                    <div class="credit-card"><img class="mastercard" src="./credit-card-flags/mastercard.svg"/></div>
                     <div class="credit-card"><img class="visa" src="./credit-card-flags/visa.svg"/></div>
                     <div class="credit-card"><img class="amex" src="./credit-card-flags/amex.svg"/></div>
                     <div class="credit-card"><img class="elo" src="./credit-card-flags/elo.svg"/></div>
@@ -79,7 +80,6 @@
                     <div class="form-group col-xs-7">
                         <label for="exp-date">Validade (MM/AA)</label>
                         <div class="form-control input" id="exp-date" name="exp-date" data-bluesnap="exp"></div>
-                        <span class="helper-text"></span>
                     </div>
                     
                     <!-- Cï¿½digo de seguranï¿½a-->
@@ -100,7 +100,13 @@
                     <div class="form-group col-md-12">
                         <label for="cardholder-name">Nome impresso no cartão</label>
                         <input type="text" class="form-control" id="cardholder-name" name="cardholder-name">
-                        <span class="helper-text"></span>
+                    </div>
+
+                    <!-- PARCELAS -->
+                    <div class="form-group col-md-12">
+                        <label for="installments">Parcelas</label>
+                        <a href="#select-installments" class="edit-installments" onclick="showInstallments()">Editar parcelas</a>
+                        <select id="select-installments" class="form-control select-installments hide" name="select-installments"></select>
                     </div>
 
                     <button class="btn btn-success btn-lg col-xs-12" type="submit" id="submit-button">
@@ -154,7 +160,7 @@
                     </div>
                 </div>
 
-                <div class="security-badges form group col-md-12" id="security-bedges">
+                <div class="form-group col-md-12 security-badges">
                     <div>
                         <svg viewBox="0 0 49 66" width="35" xmlns="http://www.w3.org/2000/svg">
                             <g fill="#318834" fill-rule="evenodd">
