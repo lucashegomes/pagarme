@@ -54,6 +54,14 @@ $(".payment-flags .credit-card").click(function()
     event.stopPropagation();
 });
 
+$('.payment-flags div.credit-card').click(function(event){
+    var imageSource = event.target.getAttribute('src');
+
+    $('#card-logo img').attr('src', imageSource).css('height', '32px');
+    $('#card-logo').css('padding', 0);
+
+});
+
 $(".payment-flags .paypal").click(function(event)
 {
     $("div.paypal-panel").removeClass('hide');
@@ -70,6 +78,11 @@ $(".payment-flags .boleto").click(function(event)
     $("div.paypal-panel").addClass('hide');
     event.stopPropagation();
 });
+
+
+// $("form").submit(function(e){
+//     e.preventDefault();
+// });
 
 function showInstallments()
 {
@@ -90,6 +103,22 @@ function showInstallments()
     }
 
     $(".select-installments").removeClass('hide');
+    $(".select-installments, label.text-installments").removeClass('hide');
         
     $('.edit-installments').addClass('hide');
+}
+
+function submitForm(element) {
+    
+    // var method = element.getAttribute('method');
+    // var body = $('body');
+    // var form = $('#checkout-form');
+
+    // body.append(
+    //     '<input type="hidden" name="payment-method" value="' + method + '">'
+    // );
+
+    // form.submit();
+
+    // $.post('./index.php', );
 }

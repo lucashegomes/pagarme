@@ -98,7 +98,7 @@ class Gateway_Pagarme {
                 $result = $this->_toArray($transaction);
             
             } else if ($this->_paymentMethod == 'boleto') {
-                $test = 0;
+
             }
 
         } catch (Exception $e) {
