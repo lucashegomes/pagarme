@@ -86,15 +86,15 @@ $(".payment-flags .boleto").click(function(event)
 
 function showInstallments()
 {
-    var total = 197.00;
-    var taxa = 4.40;
+    var total = 250.00;
+    var taxa = 1.531;
 
     for (var i = 1; i <= 12; i++) {
 
         var installmentValue = total;
 
         if (i > 1) {
-            installmentValue = (total + (total * 0.01 * taxa)) / i;
+            installmentValue = (total * Math.pow(1 + (taxa / 100), i)) / i;
         }
 
         $(".select-installments").prepend(
