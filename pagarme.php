@@ -127,14 +127,17 @@ class Gateway_Pagarme {
 
             if ($this->_paymentMethod == 'credit_card') {
     
-                $transaction = $this->_pagarme->transactions()->create([
-                    $arParams,
+                $params = [
                     'payment_method' => $this->_paymentMethod,
                     'card_holder_name' => $this->_data['cardholder-name'],
                     'card_cvv' => $this->_data['cvv'],
                     'card_number' => $this->_data['card-number'],
                     'card_expiration_date' => $this->_data['exp-date'],
-                ]);
+                ];
+
+                $params = array_merge($params, $arParams);
+
+                $transaction = $this->_pagarme->transactions()->create($params);
 
                 $result = $this->_toArray($transaction);
 
@@ -148,11 +151,14 @@ class Gateway_Pagarme {
                     echo "Documentos do cliente não informado.";
                 }
 
-                $transaction = $this->_pagarme->transactions()->create([
-                    $arParams,
+                $params = [
                     'boleto_instructions' => substr($this->boletoInstructions, 0, 255),
                     'boleto_expiration_date' => $this->getBoletoExpirationDate(),
-                ]);
+                ];
+
+                $params = array_merge($params, $arParams);
+
+                $transaction = $this->_pagarme->transactions()->create($params);
 
                 $result = $this->_toArray($transaction);
             }
