@@ -79,11 +79,6 @@ $(".payment-flags .boleto").click(function(event)
     event.stopPropagation();
 });
 
-
-// $("form").submit(function(e){
-//     e.preventDefault();
-// });
-
 function showInstallments()
 {
     var total = 250.00;
@@ -108,17 +103,6 @@ function showInstallments()
     $('.edit-installments').addClass('hide');
 }
 
-function submitForm(element) {
+$(document).ready(function(){
     
-    // var method = element.getAttribute('method');
-    // var body = $('body');
-    // var form = $('#checkout-form');
-
-    // body.append(
-    //     '<input type="hidden" name="payment-method" value="' + method + '">'
-    // );
-
-    // form.submit();
-
-    // $.post('./index.php', );
-}
+});

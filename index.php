@@ -10,12 +10,13 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900&display=swap" rel="stylesheet">    
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" type="image/png" href="/credit-card-flags/gd.png">
 </head>
 
 <body>
     <div class="panel panel-default bootstrap-basic">
-        <form class="panel-body" action="./pagarme.php" method="POST" id="checkout-form" >
+        <form class="panel-body" action="/pagarme.php" method="POST" id="checkout-form" >
             <div class="row">
                 <!-- Nome Completo -->
                 <div class="form-group col-md-12">
@@ -55,14 +56,14 @@
          
                 <!-- Bandeiras de cartÃ£o-->
                 <div class="form-group col-md-12 payment-flags">
-                    <div class="credit-card"><img class="mastercard" src="./credit-card-flags/mastercard.svg"/></div>
-                    <div class="credit-card"><img class="visa" src="./credit-card-flags/visa.svg"/></div>
-                    <div class="credit-card"><img class="amex" src="./credit-card-flags/amex.svg"/></div>
-                    <div class="credit-card"><img class="elo" src="./credit-card-flags/elo.svg"/></div>
-                    <div class="credit-card"><img class="diners" src="./credit-card-flags/diners.svg"/></div>
-                    <div class="credit-card"><img class="hiper" src="./credit-card-flags/hipercard.svg"/></div>
-                    <div><img class="paypal" src="./credit-card-flags/paypal.svg"/></div>
-                    <div><img class="boleto" src="./credit-card-flags/boleto.svg"/></div>
+                    <div class="credit-card"><img class="mastercard" src="/credit-card-flags/mastercard.svg"/></div>
+                    <div class="credit-card"><img class="visa" src="/credit-card-flags/visa.svg"/></div>
+                    <div class="credit-card"><img class="amex" src="/credit-card-flags/amex.svg"/></div>
+                    <div class="credit-card"><img class="elo" src="/credit-card-flags/elo.svg"/></div>
+                    <div class="credit-card"><img class="diners" src="/credit-card-flags/diners.svg"/></div>
+                    <div class="credit-card"><img class="hiper" src="/credit-card-flags/hipercard.svg"/></div>
+                    <div><img class="paypal" src="/credit-card-flags/paypal.svg"/></div>
+                    <div><img class="boleto" src="/credit-card-flags/boleto.svg"/></div>
                 </div>
 
                 <div class="card-panel">
@@ -89,10 +90,11 @@
                     </div>
     
                     <div class="popup-info card-info">
-                        <p>For <strong>Visa</strong> and <strong>Mastercard</strong> (left image), the 3 digits on the back of your card.</p>
+                        <img src="/credit-card-flags/creditcard-cvv.png">
+                        <!-- <p>For <strong>Visa</strong> and <strong>Mastercard</strong> (left image), the 3 digits on the back of your card.</p>
                         <p>For <strong>American Express</strong> (right image), the 4 digits on the front of your card.</p>
                         <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/227389/card-1.png" alt="" />
-                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/227389/card-2.png" alt="" />
+                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/227389/card-2.png" alt="" /> -->
                     </div>
                     
                     <!-- NÃºmero do cartÃ£o -->
@@ -206,7 +208,7 @@
 <script type="text/javascript" src="https://sandbox.bluesnap.com/services/hosted-payment-fields/v1.0/bluesnap.hpf.mini.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
-<script type="text/javascript" src="./script.js"></script>
+<script type="text/javascript" src="/script.js"></script>
 
 </body>
 </html>

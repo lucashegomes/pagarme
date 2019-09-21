@@ -1,7 +1,5 @@
 <?php
 
-use Aws\CloudFront\Exception\Exception;
-
 use function GuzzleHttp\json_decode;
 
 require("vendor/autoload.php");
@@ -59,12 +57,13 @@ class Gateway_Pagarme {
         try {
 
             $arParams = [
+                'payment_method' => $this->_paymentMethod,
                 'amount' => str_replace('.', '', $this->_data['amount']),
                 'postback_url' => $this->_postback,
                 'soft_descriptor' => substr($this->_softDescription, 0, 13),
 
                 'customer' => [
-                    'external_id' => $this->_data['client_id'],
+                    'external_id' => $this->_data['client_id'] ?: '1', //FAZER TRATAMENTO MELHOR
                     'name' => $this->_data['full-name'],
                     'type' => ( strlen($this->_data['cpf-cnpj']) <= 11 ? 'individual' : 'corporation' ),
                     'country' => 'br',
@@ -79,7 +78,7 @@ class Gateway_Pagarme {
                 ],
                 
                 'billing' => [
-                    'name' => $this->_data['cardholder-name'],
+                    'name' => $this->_data['cardholder-name'] ?: $this->_data['full-name'],
                     'address' => [
                       'country' => 'br',
                       'street' => 'Avenida Brigadeiro Faria Lima',
@@ -128,7 +127,6 @@ class Gateway_Pagarme {
             if ($this->_paymentMethod == 'credit_card') {
     
                 $params = [
-                    'payment_method' => $this->_paymentMethod,
                     'card_holder_name' => $this->_data['cardholder-name'],
                     'card_cvv' => $this->_data['cvv'],
                     'card_number' => $this->_data['card-number'],
@@ -163,13 +161,11 @@ class Gateway_Pagarme {
                 $result = $this->_toArray($transaction);
             }
 
-            print_r($result);
-
-        } catch (Exception $e) {
-            throw new Exception('Erro ao realizar pagamento: ', $e);
+        } catch (\Exception $e) {
+            $result = 'Erro ao realizar pagamento: ' . $e;
         }
 
-        return $result;
+        print_r('<pre>' . $result . '</pre>');
     }
 
     public function cancelTransaction($idTransaction = null)
@@ -186,11 +182,52 @@ class Gateway_Pagarme {
 
             $result = $this->_toArray($refundedTransaction);
             
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new Exception("Erro ao cancelar a transação {$idTransaction}: ", $e);
         }
 
-        return $result;
+        print_r('<pre>' . $result . '</pre>');
+    }
+
+    public function createPlan($paymentMethod = ['credit_card'], $amount = 1, $days = 30, $name = 'Plano')
+    {
+        $plan = $this->_pagarme->plans()->create([
+            'amount' => $amount,
+            'days' => $days,
+            'name' => $name,
+            'payment-method' => $paymentMethod,
+        ]);
+    }
+
+    public function createSubscription($idPlan = '', $paymentMethod = ['credit_card'])
+    {
+        if (!$idPlan) return;
+
+        $substription = $this->_pagarme->subscriptions()->create([
+            'plan_id' => $idPlan,
+            'payment_method' => $paymentMethod,
+            'card_holder_name' => $this->_data['cardholder-name'],
+            'card_cvv' => $this->_data['cvv'],
+            'card_number' => $this->_data['card-number'],
+            'card_expiration_date' => $this->_data['exp-date'],
+            'postback_url' => $this->_postback,
+            'customer' => [
+                'email' => $this->_data['email'],
+                'name' => $this->_data['cardholder-name'] ?: $this->_data['full-name'],
+                'document_number' => $this->_data['cpf-cnpj'],
+            ],
+        ]);
+    }
+
+
+    public function updatePlan($idPlan = '', $name = '')
+    {
+        if (!$idPlan) return;
+
+        $updatedPlan = $this->_pagarme->plans()->update([
+            'id' => $idPlan,
+            'name' => $name,
+        ]);
     }
 
     public function getTransaction($idTransaction = null)
@@ -207,11 +244,11 @@ class Gateway_Pagarme {
 
             $result = $this->_toArray($transaction);
             
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             throw new Exception("Erro ao consultar a transação {$idTransaction}: ", $e);
         }
 
-        return $result;
+        print_r('<pre>' . $result . '</pre>');
     }
 
     public function getCancellations($idTransaction)
@@ -222,21 +259,43 @@ class Gateway_Pagarme {
 
         $result = $this->_toArray($transactionRefunds);
 
-        return $result;
+        print_r('<pre>' . $result . '</pre>');
     }
 
-    public function calculateRate($amount, $freeInstallments, $maxInstallments, $rate)
+    public function getCustomer($idCustomer)
     {
-        $calculateInstallments = $this->_pagarme->transactions()->calculateInstallments([
-            'amount' => $amount,
-            'free_installments' => $freeInstallments,
-            'max_installments' => $maxInstallments,
-            'interest_rate' => $rate,
+        if (!$idCustomer) return;
+
+        $customer = $this->_pagarme->customers($idCustomer);
+
+        $result = $this->_toArray($customer);
+
+        print_r('<pre>' . $result . '</pre>');
+    }
+
+    public function getPlan($idPlan = '')
+    {
+        $plan = $this->_pagarme->plans()->get([
+            'id' => $idPlan,
         ]);
 
-        $result = $this->_toArray($calculateInstallments);
+        $result = $this->_toArray($plan);
 
-        return $result;
+        print_r('<pre>' . $result . '</pre>');
+    }
+
+    public function calculateRate($amount, $rate = 1.531, $maxInstallments = 12)
+    {
+        for ($i = 1; $i <= $maxInstallments; $i++) {
+            
+            $installments[$i] = $amount;
+
+            if ($i > 1) {
+                $installments[$i] = ($amount * pow(1 + ($rate / 100), $i)) / $i;
+            }
+        }
+
+        return $installments;
     }
 
     public function sendNotification($idTransaction = null, $email = null)
@@ -273,5 +332,11 @@ class Gateway_Pagarme {
     private function _toArray($object = [])
     {
         return json_decode(json_encode($object), true);
+    }
+
+    private function _formatStringToAlphanumeric($string = '')
+    {
+        $result = preg_replace("/[^a-zA-Z0-9]+/", "", $string);
+        return $result;
     }
 }
