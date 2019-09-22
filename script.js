@@ -1,23 +1,35 @@
-var bsObj = {
-    hostedPaymentFields: {
-        ccn: "ccn", 
-        cvv: "cvv", 
-        exp: "exp"  
-    },
-    style: {
-        "input": {
-            "color" : "#636871 !important",
-            "font-size" : "1.3rem",
-            "font-weight" : "400",
-            "line-height" : "1"
-        }
-    },
-    ccnPlaceHolder: "", 
-    cvvPlaceHolder: "", 
-    expPlaceHolder: ""
-};
+$(document).ready(function(){
 
-bluesnap.hostedPaymentFieldsCreation ("672d02b47ae64498c30ec3312ce57976bf171d86a1b75c805c212b715352639d_", bsObj);
+    var address = {
+        'address' : 'Rua Ernesto Hans',
+        'address-number' : '20',
+        'address-state' : 'SP',
+        'address-city' : 'Limeira',
+        'address-neighborhood' : 'Centro',
+        'address-cep' : '01001-000',
+    };
+
+    var items = {
+        0 : {
+            'product-id' : '76332',
+            'product-name' : 'Promoção x',
+            'unit-price' : '22.88',
+            'quantity' : '4',
+        },
+        1 : {
+            'product-id' : '883232',
+            'product-name' : 'Promoção Y',
+            'unit-price' : '145.88',
+            'quantity' : '1',
+        }
+    }
+    
+    var amount = {'amount' : 250.00};
+
+    appendElementToForm(address);
+    appendElementToForm(amount);
+    appendElementToForm(items, true);
+});
 
 //Cpf and CNPJ mask and listener config
 var options = {
@@ -103,6 +115,24 @@ function showInstallments()
     $('.edit-installments').addClass('hide');
 }
 
-$(document).ready(function(){
+function appendElementToForm(object, multidimentional = false)
+{
+    var form = $('#checkout-form');
     
-});
+    if (multidimentional) {
+
+        Object.entries(object).forEach(([index, item]) => { 
+        
+            Object.entries(item).forEach(([key, value]) => { 
+                form.append('<input type="hidden" name="' + key + '" value="' + value + '" >');
+            });
+    
+        });
+
+        return;
+    } 
+
+    Object.entries(object).forEach(([key, value]) => { 
+        form.append('<input type="hidden" name="' + key + '" value="' + value + '" >');
+    });
+}

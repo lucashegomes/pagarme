@@ -7,6 +7,9 @@ require("vendor/autoload.php");
 if (isset($_POST['btn-boleto'])) {
     $pagarme = new Gateway_Pagarme('boleto');
     $pagarme->payTransaction();
+    // $pagarme->createPlan();
+    // $pagarme->getPlans(435350);
+    // $pagarme->createSubscription(435350);
 
 } else if (isset($_POST['btn-paypal'])) {
     echo "PAYPAL REDIRECT HERE";
@@ -14,7 +17,10 @@ if (isset($_POST['btn-boleto'])) {
 } else {
     $pagarme = new Gateway_Pagarme('credit_card');
     $pagarme->payTransaction();
-}
+    // $pagarme->createPlan();
+    // $pagarme->getPlans(435350);
+    // $pagarme->createSubscription(435350);
+}   
 
 class Gateway_Pagarme {
 
@@ -28,7 +34,7 @@ class Gateway_Pagarme {
      *
      * @var string
      */
-    private $_postback = '';
+    private $_postback = 'https://gdigital.com.br/postback';
 
     /**
      * Texto (de até 13 caracteres, somente letras e números) que aparecerá na fatura do cartão
@@ -54,10 +60,15 @@ class Gateway_Pagarme {
 
     public function payTransaction()
     {
+        $result = [];
+
         try {
+
+            $cpfCnpj = $this->_formatStringToAlphanumeric($this->_data['cpf-cnpj']);
 
             $arParams = [
                 'payment_method' => $this->_paymentMethod,
+                'async' => false,
                 'amount' => str_replace('.', '', $this->_data['amount']),
                 'postback_url' => $this->_postback,
                 'soft_descriptor' => substr($this->_softDescription, 0, 13),
@@ -65,15 +76,15 @@ class Gateway_Pagarme {
                 'customer' => [
                     'external_id' => $this->_data['client_id'] ?: '1', //FAZER TRATAMENTO MELHOR
                     'name' => $this->_data['full-name'],
-                    'type' => ( strlen($this->_data['cpf-cnpj']) <= 11 ? 'individual' : 'corporation' ),
+                    'type' => ( strlen($cpfCnpj) <= 11 ? 'individual' : 'corporation' ),
                     'country' => 'br',
                     'documents' => [
                       [
                         'type' => 'cpf',
-                        'number' => $this->_data['cpf-cnpj'],
+                        'number' => $cpfCnpj,
                       ]
                     ],
-                    'phone_numbers' => [ $this->_data['cellphone-number'] ],
+                    'phone_numbers' => [ '+55' . $this->_formatStringToAlphanumeric($this->_data['cellphone-number']) ],
                     'email' => $this->_data['email'],
                 ],
                 
@@ -81,76 +92,39 @@ class Gateway_Pagarme {
                     'name' => $this->_data['cardholder-name'] ?: $this->_data['full-name'],
                     'address' => [
                       'country' => 'br',
-                      'street' => 'Avenida Brigadeiro Faria Lima',
-                      'street_number' => '1811',
-                      'state' => 'sp',
-                      'city' => 'Sao Paulo',
-                      'neighborhood' => 'Jardim Paulistano',
-                      'zipcode' => '01451001'
+                      'street' => $this->_data['address'],
+                      'street_number' => $this->_data['address-number'],
+                      'state' => $this->_data['address-state'],
+                      'city' => $this->_data['address-city'],
+                      'neighborhood' => $this->_data['address-neighborhood'],
+                      'zipcode' => $this->_formatStringToAlphanumeric($this->_data['address-cep']),
                     ]
                 ],
 
-                'shipping' => [
-                    'name' => 'Nome de quem receberÃ¡ o produto',
-                    'fee' => 1020,
-                    'delivery_date' => '2019-09-10',
-                    'expedited' => false,
-                    'address' => [
-                      'country' => 'br',
-                      'street' => 'Avenida Brigadeiro Faria Lima',
-                      'street_number' => '1811',
-                      'state' => 'sp',
-                      'city' => 'Sao Paulo',
-                      'neighborhood' => 'Jardim Paulistano',
-                      'zipcode' => '01451001'
-                    ]
-                ],
-
-                'items' => [
-                    [
-                      'id' => '1',
-                      'title' => 'R2D2',
-                      'unit_price' => 300,
-                      'quantity' => 1,
-                      'tangible' => true
-                    ],
-                    [
-                      'id' => '2',
-                      'title' => 'C-3PO',
-                      'unit_price' => 700,
-                      'quantity' => 1,
-                      'tangible' => true
-                    ]
-                ]
+                'items' => $this->_setCompositionItems(),
             ];
 
             if ($this->_paymentMethod == 'credit_card') {
-    
+
                 $params = [
+                    'installments' => (!empty($this->_data['select-installments'])) ? $this->_data['select-installments'] : 1,
                     'card_holder_name' => $this->_data['cardholder-name'],
                     'card_cvv' => $this->_data['cvv'],
                     'card_number' => $this->_data['card-number'],
-                    'card_expiration_date' => $this->_data['exp-date'],
+                    'card_expiration_date' => $this->_formatStringToAlphanumeric($this->_data['exp-date']),
                 ];
 
                 $params = array_merge($params, $arParams);
 
                 $transaction = $this->_pagarme->transactions()->create($params);
 
-                $result = $this->_toArray($transaction);
+                $result [] = $this->_toArray($transaction);
 
             } else if ($this->_paymentMethod == 'boleto') {
 
-                if (!empty($arParams['customer']['name'])) {
-                    echo "Nome do cliente não informado.";    
-                }
-
-                if (!empty($arParams['customer']['documents'])) {
-                    echo "Documentos do cliente não informado.";
-                }
-
                 $params = [
-                    'boleto_instructions' => substr($this->boletoInstructions, 0, 255),
+                    'installments' => 1,
+                    'boleto_instructions' => substr($this->_boletoInstructions, 0, 255),
                     'boleto_expiration_date' => $this->getBoletoExpirationDate(),
                 ];
 
@@ -158,14 +132,16 @@ class Gateway_Pagarme {
 
                 $transaction = $this->_pagarme->transactions()->create($params);
 
-                $result = $this->_toArray($transaction);
+                $result [] = $this->_toArray($transaction);
             }
 
         } catch (\Exception $e) {
-            $result = 'Erro ao realizar pagamento: ' . $e;
+            $result [] = 'Erro ao realizar pagamento: ' . $e;
         }
 
-        print_r('<pre>' . $result . '</pre>');
+        echo '<pre>';
+        print_r($result);
+        echo '</pre>';
     }
 
     public function cancelTransaction($idTransaction = null)
@@ -186,24 +162,44 @@ class Gateway_Pagarme {
             throw new Exception("Erro ao cancelar a transação {$idTransaction}: ", $e);
         }
 
-        print_r('<pre>' . $result . '</pre>');
+        echo '<pre>';
+        print_r($result);
+        echo '</pre>';
     }
 
-    public function createPlan($paymentMethod = ['credit_card'], $amount = 1, $days = 30, $name = 'Plano')
+    public function createPlan($paymentMethods = 'credit_card', $amount = 1, $days = 30, $installments = 12, $name = 'Plano')
     {
+        $charges = in_array('credit_card', (array) $paymentMethods) ? 2 : 3;
+        
+        if ($this->_recurrence) {
+            $charges = null;
+        }
+
         $plan = $this->_pagarme->plans()->create([
             'amount' => $amount,
             'days' => $days,
             'name' => $name,
-            'payment-method' => $paymentMethod,
+            'payment-methods' => $paymentMethods,
+            'charges' => $charges,
+            'installments' => $charges == 2 ? $installments : 1,
         ]);
+
+        $result = $this->_toArray($plan);
+
+        $this->createSubscription($result[0]['id']);
+
+        echo '<pre>';
+        print_r($result);
+        echo '</pre>';
     }
 
     public function createSubscription($idPlan = '', $paymentMethod = ['credit_card'])
     {
         if (!$idPlan) return;
 
-        $substription = $this->_pagarme->subscriptions()->create([
+        $cpfCnpj = $this->_formatStringToAlphanumeric($this->_data['cpf-cnpj']);
+
+        $subscription = $this->_pagarme->subscriptions()->create([
             'plan_id' => $idPlan,
             'payment_method' => $paymentMethod,
             'card_holder_name' => $this->_data['cardholder-name'],
@@ -214,9 +210,15 @@ class Gateway_Pagarme {
             'customer' => [
                 'email' => $this->_data['email'],
                 'name' => $this->_data['cardholder-name'] ?: $this->_data['full-name'],
-                'document_number' => $this->_data['cpf-cnpj'],
+                'document_number' => $cpfCnpj,
             ],
         ]);
+
+        $result = $this->_toArray($subscription);
+
+        echo '<pre>';
+        print_r($result);
+        echo '</pre>';
     }
 
 
@@ -248,7 +250,9 @@ class Gateway_Pagarme {
             throw new Exception("Erro ao consultar a transação {$idTransaction}: ", $e);
         }
 
-        print_r('<pre>' . $result . '</pre>');
+        echo '<pre>';
+        print_r($result);
+        echo '</pre>';
     }
 
     public function getCancellations($idTransaction)
@@ -259,7 +263,9 @@ class Gateway_Pagarme {
 
         $result = $this->_toArray($transactionRefunds);
 
-        print_r('<pre>' . $result . '</pre>');
+        echo '<pre>';
+        print_r($result);
+        echo '</pre>';
     }
 
     public function getCustomer($idCustomer)
@@ -270,18 +276,25 @@ class Gateway_Pagarme {
 
         $result = $this->_toArray($customer);
 
-        print_r('<pre>' . $result . '</pre>');
+        echo '<pre>';
+        print_r($result);
+        echo '</pre>';
     }
 
-    public function getPlan($idPlan = '')
+    public function getPlans($idPlan, $amount = null, $days = null, $name = null)
     {
-        $plan = $this->_pagarme->plans()->get([
+        $plan = $this->_pagarme->plans()->getList([
             'id' => $idPlan,
+            'amount' => $amount,
+            'days' => $days,
+            'name' => $name,
         ]);
 
         $result = $this->_toArray($plan);
 
-        print_r('<pre>' . $result . '</pre>');
+        echo '<pre>';
+        print_r($result);
+        echo '</pre>';
     }
 
     public function calculateRate($amount, $rate = 1.531, $maxInstallments = 12)
@@ -327,6 +340,39 @@ class Gateway_Pagarme {
         }
 
         return $this->_boletoExpirationDate;
+    }
+
+    public function boletoPayTesting($idTransaction)
+    {
+        $paidBoleto = $this->_pagarme->transactions()->simulateStatus([
+            'id' => $idTransaction ?: '6993906',
+            'status' => 'paid'
+        ]);
+
+        $result = $this->_toArray($paidBoleto);
+
+        echo '<pre>';
+        print_r($result);
+        echo '</pre>';
+    }
+
+    private function _setCompositionItems()
+    {
+        $arItems = $this->_data['items'];
+        $result = [];
+
+        foreach ($arItems as $item) {
+            $result [] = [
+                'id' => $item['product-id'],
+                'title' => $item['product-name'],
+                'unit_price' => $this->_formatStringToAlphanumeric($item['unit-price']),
+                'quantity' => $item['quantity'],
+                'tangible' => true
+            ];
+            
+        }
+
+        return $result;
     }
 
     private function _toArray($object = [])

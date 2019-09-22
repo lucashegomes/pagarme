@@ -71,30 +71,29 @@
                     <div class="form-group col-md-12">
                         <label for="card-number">Número do Cartão</label>
                         <div class="input-group">
-                                <div id="card-logo" class="input-group-addon"><img src="https://files.readme.io/d1a25b4-generic-card.png" height="20px"></div>
-                            <div class="form-control input" id="card-number" name="card-number" data-bluesnap="ccn"></div>
+                            <div id="card-logo" class="input-group-addon"><img src="https://files.readme.io/d1a25b4-generic-card.png" height="20px"></div>
+                            <!-- <div class="form-control input" id="card-number" name="card-number" data-bluesnap="ccn"></div> -->
+                            <input type="text" class="form-control" id="card-number" name="card-number">
                         </div>
                     </div>
                     
                     <!-- Validade do cartï¿½o-->
                     <div class="form-group col-xs-7">
                         <label for="exp-date">Validade (MM/AA)</label>
-                        <div class="form-control input" id="exp-date" name="exp-date" data-bluesnap="exp"></div>
+                        <!-- <div class="form-control input" id="exp-date" name="exp-date" data-bluesnap="exp"></div> -->
+                        <input type="text" class="form-control" id="exp-date" name="exp-date">
                     </div>
                     
                     <!-- Cï¿½digo de seguranï¿½a-->
                     <div class="form-group col-xs-5 cvv">
                         <label for="cvv">Cod Segurança</label>
                         <i id="help-cvv" class="fa fa-lg fa-question-circle text-info"></i>
-                        <div class="form-control input" id="cvv" name="cvv" data-bluesnap="cvv"></div>
+                        <!-- <div class="form-control input" id="cvv" name="cvv" data-bluesnap="cvv"></div> -->
+                        <input type="text" class="form-control" id="cvv" name="cvv">
                     </div>
     
                     <div class="popup-info card-info">
                         <img src="/credit-card-flags/creditcard-cvv.png">
-                        <!-- <p>For <strong>Visa</strong> and <strong>Mastercard</strong> (left image), the 3 digits on the back of your card.</p>
-                        <p>For <strong>American Express</strong> (right image), the 4 digits on the front of your card.</p>
-                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/227389/card-1.png" alt="" />
-                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/227389/card-2.png" alt="" /> -->
                     </div>
                     
                     <!-- NÃºmero do cartÃ£o -->
