@@ -53,7 +53,7 @@ class Gateway_Pagarme {
 
     public function __construct($paymentMethod = 'credit_card')
     {
-        $this->_paymentMethod = $_POST['payment-method'] ?: $paymentMethod;
+        $this->_paymentMethod = $paymentMethod;
         $this->_pagarme = new PagarMe\Client($this->_apiKey);
         $this->_data = $_POST;
     }
@@ -74,7 +74,7 @@ class Gateway_Pagarme {
                 'soft_descriptor' => substr($this->_softDescription, 0, 13),
 
                 'customer' => [
-                    'external_id' => $this->_data['client_id'] ?: '1', //FAZER TRATAMENTO MELHOR
+                    'external_id' => !empty($this->_data['client_id']) ? $this->_data['client_id'] : '1', //FAZER TRATAMENTO MELHOR
                     'name' => $this->_data['full-name'],
                     'type' => ( strlen($cpfCnpj) <= 11 ? 'individual' : 'corporation' ),
                     'country' => 'br',
